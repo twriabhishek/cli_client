@@ -1,0 +1,29 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* .btn {
+    border: 1px solid black;
+    width: 100px;
+    height: 40px;
+    position: relative;
+    cursor: pointer;
+    text-transform: uppercase;
+    position: relative;
+    background-color: rgb(233, 118, 108);
+    margin-bottom: 13px;
+    color: white;
+    
+}
+
+.btn-300::after {
+    display: block;
+    box-shadow: 0 0 0 1px #0ebac5;
+    position: absolute;
+}
+
+.btn-300:hover {
+    background-color: rgb(233, 63, 48);
+} */

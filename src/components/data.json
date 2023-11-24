@@ -1,0 +1,115 @@
+[
+    {
+      "id": 1,
+      "phoneName": "Samsung",
+      "displayNumber": "123456789",
+      "phoneNumber": "9087654567",
+      "date": "2023-12-10",
+      "status": "Active"
+    },
+    {
+      "id": 2,
+      "phoneName": "Oneplus",
+      "displayNumber": "987654321",
+      "phoneNumber": "9876541234",
+      "date": "2023-12-15",
+      "status": "Inactive"
+    },
+    {
+      "id": 3,
+      "phoneName": "iPhone",
+      "displayNumber": "555555555",
+      "phoneNumber": "1234567890",
+      "date": "2023-11-25",
+      "status": "Active"
+    },
+    {
+      "id": 4,
+      "phoneName": "Google Pixel",
+      "displayNumber": "777777777",
+      "phoneNumber": "5555555555",
+      "date": "2023-10-05",
+      "status": "Active"
+    },
+    {
+      "id": 5,
+      "phoneName": "Xiaomi",
+      "displayNumber": "444444444",
+      "phoneNumber": "9999999999",
+      "date": "2023-11-30",
+      "status": "Inactive"
+    },
+    {
+      "id": 6,
+      "phoneName": "LG",
+      "displayNumber": "666666666",
+      "phoneNumber": "6666666666",
+      "date": "2023-10-20",
+      "status": "Active"
+    },
+    {
+      "id": 7,
+      "phoneName": "Sony",
+      "displayNumber": "888888888",
+      "phoneNumber": "7777777777",
+      "date": "2023-12-01",
+      "status": "Inactive"
+    },
+    {
+      "id": 8,
+      "phoneName": "Motorola",
+      "displayNumber": "222222222",
+      "phoneNumber": "3333333333",
+      "date": "2023-10-10",
+      "status": "Active"
+    },
+    {
+      "id": 9,
+      "phoneName": "Nokia",
+      "displayNumber": "999999999",
+      "phoneNumber": "1111111111",
+      "date": "2023-12-05",
+      "status": "Active"
+    },
+    {
+      "id": 10,
+      "phoneName": "Huawei",
+      "displayNumber": "333333333",
+      "phoneNumber": "2222222222",
+      "date": "2023-11-15",
+      "status": "Inactive"
+    },
+    {
+        "id": 9,
+        "phoneName": "Nokia",
+        "displayNumber": "999999999",
+        "phoneNumber": "1111111111",
+        "date": "2023-12-05",
+        "status": "Active"
+      },
+      {
+        "id": 10,
+        "phoneName": "Huawei",
+        "displayNumber": "333333333",
+        "phoneNumber": "2222222222",
+        "date": "2023-11-15",
+        "status": "Inactive"
+      },
+      {
+        "id": 9,
+        "phoneName": "Nokia",
+        "displayNumber": "999999999",
+        "phoneNumber": "1111111111",
+        "date": "2023-12-05",
+        "status": "Active"
+      },
+      {
+        "id": 10,
+        "phoneName": "Huawei",
+        "displayNumber": "333333333",
+        "phoneNumber": "2222222222",
+        "date": "2023-11-15",
+        "status": "Inactive"
+    }
+  ]
+  

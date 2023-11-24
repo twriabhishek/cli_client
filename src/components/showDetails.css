@@ -1,0 +1,7 @@
+.row {
+    border: 1px solid #000; /* Add a border to all rows */
+}
+
+.col-6 {
+    border: 1px solid #000; /* Add a border to all columns with class "col-6" */
+}
