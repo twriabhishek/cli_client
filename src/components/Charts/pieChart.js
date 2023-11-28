@@ -32,7 +32,6 @@ const ChartPie = () => {
         const connectionMessage = response.body;
         const parsedMessage = JSON.parse(connectionMessage);
         setAuditData(parsedMessage);
-        console.log(parsedMessage);
       });
     });
 
@@ -45,14 +44,12 @@ const ChartPie = () => {
     };
   }, []); // Empty dependency array to run this effect once
 
-  
   // Process the audit data to calculate date-wise number of valid and invalid contacts
   const calculateStats = () => {
     const dateWiseStats = {};
 
     auditData.forEach((entry) => {
       const date = new Date(entry.date);
-      console.log(date);
       const extractedDate = date.toLocaleDateString("en-GB", {
         year: "numeric",
         month: "2-digit",
@@ -79,7 +76,7 @@ const ChartPie = () => {
     return dateWiseStats;
   };
 
-// Format the date in "13 Dec 23" format
+  // Format the date in "13 Dec 23" format
 const formatChartData = () => {
   const dateWiseStats = calculateStats();
 
@@ -96,71 +93,62 @@ const formatChartData = () => {
     return [];
   }
 
-    // Take only the last date (current date)
-    const currentDate = new Date();
-    const currentDateString = currentDate.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
+  // Take only the last date (current date)
+  const currentDate = new Date();
+  const currentDateString = currentDate.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 
   if (!dateWiseStats[currentDateString]) {
     // If there is no data for today, return an empty array
     return [];
   }
 
+  const totalCount =
+    dateWiseStats[currentDateString].valid + dateWiseStats[currentDateString].invalid;
+
   const formattedData = [
     {
-      name: "Valid",
+      name: `Valid (${((dateWiseStats[currentDateString].valid / totalCount) * 100).toFixed(2)}%)`,
       value: dateWiseStats[currentDateString].valid,
     },
     {
-      name: "Invalid",
+      name: `Invalid (${((dateWiseStats[currentDateString].invalid / totalCount) * 100).toFixed(2)}%)`,
       value: dateWiseStats[currentDateString].invalid,
     },
   ];
 
   return formattedData;
 };
-const pieChartData = formatChartData();
-console.log(pieChartData);
 
+
+  const pieChartData = formatChartData();
 
   // Function to format the tooltip content with percentage values for the current date
-  const renderTooltipContent = (props) => {
-    const dateWiseStats = calculateStats();
-    const { payload } = props;
 
+  const renderTooltipContent = (props) => {
+    const { payload } = props;
     if (payload && payload.length > 0) {
       const entry = payload[0].payload;
-      const currentDate = new Date();
-      const currentDateString = currentDate.toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      });
+      const totalCount = entry.value + entry.value2; // Adjust this based on your data structure
 
-      if (dateWiseStats[currentDateString]) {
-        const totalCount = dateWiseStats[currentDateString].valid + dateWiseStats[currentDateString].invalid;
-        const percentage = ((entry.value / totalCount) * 100).toFixed(2);
-
-        return (
-          <div style={{ backgroundColor: '#fff', padding: '5px', border: '1px solid #ccc' }}>
-            <p>{`${entry.name}: ${percentage}%`}</p>
-          </div>
-        );
-      }
+      return (
+        <div style={{ backgroundColor: '#fff', padding: '5px', border: '1px solid #ccc' }}>
+          <p>{`${entry.name}`}</p>
+        </div>
+      );
     }
-
     return null;
   };
 
-  const COLORS = ["#008000", "#ff0800", "#FFBB28", "#FF8042", "#AF19FF", "#82ca9d", "#ffc658"];
+  const COLORS = ["#82ca9d", "#ff817e", "#FFBB28", "#FF8042", "#AF19FF", "#82ca9d", "#ffc658"];
 
   return (
     <ResponsiveContainer width="100%" height="100%">
       <PieChart>
-        <Tooltip content={renderTooltipContent}/>
+        <Tooltip content={renderTooltipContent} />
         <Legend layout="horizontal" />
         <Pie
           data={pieChartData}
@@ -176,7 +164,6 @@ console.log(pieChartData);
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>
-        <Tooltip />
       </PieChart>
     </ResponsiveContainer>
   );

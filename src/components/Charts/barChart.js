@@ -53,19 +53,12 @@ const ChartBar = () => {
     const dateWiseStats = {};
 
     auditData.forEach((entry) => {
-      const date = new Date(entry.date);
-      console.log(date);
-      const extractedDate = date.toLocaleDateString("en-GB", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
-      console.log(extractedDate);
+      const date = entry.date.slice(0, 10);
       const status = entry.status;
 
       // Initialize date entry if not present
-      if (!dateWiseStats[extractedDate]) {
-        dateWiseStats[extractedDate] = {
+      if (!dateWiseStats[date]) {
+        dateWiseStats[date] = {
           valid: 0,
           invalid: 0,
         };
@@ -73,12 +66,12 @@ const ChartBar = () => {
 
       // Update the count based on the status
       if (status === "Valid" || status === "valid") {
-        dateWiseStats[extractedDate].valid += 1;
+        dateWiseStats[date].valid += 1;
       } else if (status === "Invalid" || status === "invalid") {
-        dateWiseStats[extractedDate].invalid += 1;
+        dateWiseStats[date].invalid += 1;
       }
     });
-    // console.log(dateWiseStats);
+    console.log(dateWiseStats);
     return dateWiseStats;
   };
 
@@ -92,40 +85,31 @@ const ChartBar = () => {
       return [];
     }
 
-    // Extract all dates and sort them in ascending order
-    const allDates = Object.keys(dateWiseStats).sort(
-      (a, b) => new Date(a) - new Date(b)
-    );
-    console.log(allDates);
-
-    // Check if allDates array is empty
-    if (allDates.length === 0) {
-      return [];
-    }
-
     // Take only the last date (current date)
-    const currentDate = new Date();
-    const currentDateString = currentDate.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
+    const currentDat = new Date();
+    const year = currentDat.getFullYear();
+    const month = String(currentDat.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const day = String(currentDat.getDate()).padStart(2, "0");
+    const formattedDat = `${year}-${month}-${day}`;
+    console.log(formattedDat);
 
-    if (!dateWiseStats[currentDateString]) {
+    if (!dateWiseStats[formattedDat]) {
       // If there is no data for today, return an empty array
       return [];
     }
 
     const formattedData = [
       {
-        date: currentDateString,
-        Valid: dateWiseStats[currentDateString].valid,
-        Invalid: dateWiseStats[currentDateString].invalid,
+        date: formattedDat,
+        Valid: dateWiseStats[formattedDat].valid,
+        Invalid: dateWiseStats[formattedDat].invalid,
       },
     ];
 
     return formattedData;
   };
+
+  const chartData = formatChartData();
 
   return (
     <>
@@ -133,7 +117,7 @@ const ChartBar = () => {
         <BarChart
           width={500}
           height={300}
-          data={formatChartData()}
+          data={chartData}
           margin={{
             top: 5,
             right: 30,
@@ -145,15 +129,21 @@ const ChartBar = () => {
           <XAxis dataKey="date" />
           <YAxis />
           <Tooltip />
-          <Legend />
+          <Legend
+            formatter={(value, entry) => {
+              const count = chartData[0]?.[value] || 0;
+              return `${value} (${count})`;
+            }}
+          />
+
           <Bar
             dataKey="Valid"
-            fill="#008000"
+            fill="#82ca9d"
             activeBar={<Rectangle fill="pink" stroke="blue" />}
           />
           <Bar
             dataKey="Invalid"
-            fill="#ff0800"
+            fill="#ff817e"
             activeBar={<Rectangle fill="gold" stroke="purple" />}
           />
         </BarChart>

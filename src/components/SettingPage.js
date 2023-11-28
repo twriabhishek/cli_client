@@ -3,6 +3,9 @@ import "rc-slider/assets/index.css";
 import ChartBarReport from "./Charts/barChartReport.js";
 import ChartLineReport from "./Charts/lineChartReport.js";
 import * as XLSX from "xlsx";
+import "./component.css";
+import { RiDownloadLine } from "react-icons/ri";
+
 function ShowDetails() {
   const [searchCriteria, setSearchCriteria] = useState({
     phoneName: "",
@@ -10,7 +13,8 @@ function ShowDetails() {
     todate: "",
   });
   const [filterCriteria, setFilterCriteria] = useState({
-    status: "7",
+    month: "7",
+    week: undefined,
   });
   const [fetcheddata, setFetcheddata] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -26,7 +30,6 @@ function ShowDetails() {
         "http://localhost:8085/contactInfo/auditContacts"
       );
       const data = await response.json();
-      console.log(data);
       setFetcheddata(data);
       setSearchData(data);
     } catch (error) {
@@ -57,7 +60,12 @@ function ShowDetails() {
   };
 
   const handleFilterChange = (e) => {
-    setFilterCriteria({ status: e.target.value });
+    setFilterCriteria({ month: e.target.value });
+
+    console.log(e.target.value);
+  };
+  const handleFilterChangeWeek = (e) => {
+    setFilterCriteria({ week: e.target.value });
     console.log(e.target.value);
   };
 
@@ -72,14 +80,22 @@ function ShowDetails() {
   };
 
   const handleDownload = () => {
+    const modifiedData = fetcheddata.map((item) => ({
+      ...item,
+      // Assuming 'date' is a string in ISO format (e.g., "2023-11-27T12:34:56.789Z")
+      date: item.date ? item.date.slice(0, 10) : null,
+      time: item.date ? new Date(item.date).toLocaleTimeString() : null,
+    }));
+    console.log(modifiedData);
+
     const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.json_to_sheet(fetcheddata);
+    const worksheet = XLSX.utils.json_to_sheet(modifiedData);
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     XLSX.writeFile(workbook, "table_data.xlsx");
   };
 
   return (
-    <div className="pt-1" id="showDetails">
+    <div className="pt-1 dash-bg" id="showDetails">
       <div className="row m-0">
         <div className="col-lg-1 col-md-1 pt-4">
           <div
@@ -95,7 +111,7 @@ function ShowDetails() {
               <select
                 className="w-100"
                 aria-label="Default select example"
-                value={filterCriteria.status}
+                value={filterCriteria.month}
                 onChange={handleFilterChange}
               >
                 <option value="1">January</option>
@@ -110,6 +126,26 @@ function ShowDetails() {
                 <option value="10">October</option>
                 <option value="11">November</option>
                 <option value="12">December</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="" className="fs-5">
+                Week
+              </label>
+              <select
+                className="w-100"
+                aria-label="Default select example"
+                value={filterCriteria.week}
+                onChange={handleFilterChangeWeek}
+              >
+                <option value="1">Select</option>
+                <option value="1">1 week</option>
+                <option value="2">2 week</option>
+                <option value="3">3 week</option>
+                <option value="4">4 week</option>
+                <option value="5">5 week</option>
+                <option value="6">6 week</option>
+                <option value="7">7 week</option>
               </select>
             </div>
           </div>
@@ -159,18 +195,14 @@ function ShowDetails() {
               id="Phone"
               placeholder="choose date"
             />
-
-            <button className="btn btn-primary mx-2" onClick={handleSearch}>
-              Search
-            </button>
-
-            <button
-              type="button"
-              className="btn btn-danger mx-2"
-              onClick={handleReset}
-            >
-              Reset
-            </button>
+            <div>
+              <button className="button-4" role="button" onClick={handleSearch}>
+                Search
+              </button>
+              <button className="button-4" role="button" onClick={handleReset}>
+                Reset
+              </button>
+            </div>
           </div>
 
           <div className="row">
@@ -178,16 +210,22 @@ function ShowDetails() {
               <div
                 className="col-12 mb-3"
                 id="boxStyling"
-                style={{ border: "1px solid #a7a7a7", padding: "10px" }}
+                style={{
+                  border: "1px solid #a7a7a7",
+                  padding: "10px",
+                  boxShadow:
+                    "rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px",
+                }}
               >
                 <>
                   <div
+                    className="chart-bg"
                     style={{
                       height: "15rem",
                     }}
                   >
                     {/* <ChartBarReport value={filteredData}></ChartBarReport> */}
-                    <ChartBarReport filterStatus={filterCriteria.status} />
+                    <ChartBarReport filterStatus={filterCriteria} />
                   </div>
                 </>
               </div>
@@ -196,15 +234,21 @@ function ShowDetails() {
               <div
                 className="col-12 mb-3"
                 id="boxStyling"
-                style={{ border: "1px solid #a7a7a7", padding: "10px" }}
+                style={{
+                  border: "1px solid #a7a7a7",
+                  padding: "10px",
+                  boxShadow:
+                    "rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px",
+                }}
               >
                 <>
                   <div
+                    className="chart-bg"
                     style={{
                       height: "15rem",
                     }}
                   >
-                    <ChartLineReport filterStatus={filterCriteria.status} />
+                    <ChartLineReport filterStatus={filterCriteria} />
                   </div>
                 </>
               </div>
@@ -227,9 +271,13 @@ function ShowDetails() {
                     }}
                   >
                     <div className="" style={{ float: "right" }}>
+                      {/* <button onClick={handleDownload} style={{borderRadius:"5px", padding:"2px", margin:"2px"}}>Download</button> */}
                       <button
+                        class="button-4"
+                        role="button"
                         onClick={handleDownload}
                       >
+                        <RiDownloadLine/>
                         Download
                       </button>
                     </div>
@@ -249,11 +297,11 @@ function ShowDetails() {
 
                           <th scope="col text-center">Call ID</th>
 
-                          <th scope="col text-center">MonitorCrossRefID</th>
+                          <th scope="col text-center">Status</th>
 
                           <th scope="col text-center">QueueDeviceIdentifier</th>
 
-                          <th scope="col text-center">Status</th>
+                          <th scope="col text-center">MonitorCrossRefID</th>
                         </tr>
                       </thead>
 
@@ -280,13 +328,25 @@ function ShowDetails() {
                               })}
                             </td>
                             <td className="text-center data1">{item.callId}</td>
-                            <td className="text-center data1">
-                              {item.monitorCrossRefID}
+
+                            <td
+                              style={{
+                                color:
+                                  item.status === "valid" ||
+                                  item.status === "Valid"
+                                    ? "green"
+                                    : "red",
+                                textTransform: "capitalize",
+                              }}
+                            >
+                              {item.status}
                             </td>
                             <td className="text-center data1">
                               {item.queueDeviceIdentifier}
                             </td>
-                            <td className="text-center data1">{item.status}</td>
+                            <td className="text-center data1">
+                              {item.monitorCrossRefID}
+                            </td>
                           </tr>
                         ))}
                       </tbody>

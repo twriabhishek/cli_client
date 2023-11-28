@@ -3,6 +3,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import "./Homepage.css";
+import "./component.css";
 
 function Homepage() {
   const [showForm, setShowForm] = useState(false);
@@ -193,8 +194,9 @@ function Homepage() {
 
   return (
     <>
+    <div>
       <div
-        style={{ height: "100vh", width: "100vw", backgroundColor: "#ffffff" }}
+        className="dash-bg" style={{ height: "100vh", width: "100vw"}}
       >
         {/* <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>
           <h3>Create Phone number:</h3>
@@ -307,14 +309,7 @@ function Homepage() {
               </div>
 
               <div>
-                <button
-                  className="btn btn-primary mx-2"
-                  type="submit"
-                  onClick={isUpdateMode ? handleUpdateSubmit : handleFormSubmit}
-                  // style={{ backgroundColor: "#7FFFD4", color: "black" }}
-                >
-                  {isUpdateMode ? "Update" : "Submit"}
-                </button>
+                <button type="submit" class="button-4" role="button" onClick={isUpdateMode ? handleUpdateSubmit : handleFormSubmit}>{isUpdateMode ? "Update" : "Submit"}</button>
               </div>
             </div>
           </div>
@@ -389,6 +384,7 @@ function Homepage() {
           </div>
         </div>
         <ToastContainer />
+      </div>
       </div>
     </>
   );

@@ -3,11 +3,12 @@ import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import ChartBar from "./Charts/barChart.js";
 import Chartpie from "./Charts/pieChart.js";
-import ChartGauge from "./Charts/GaugeChart.js";
+import "./component.css";
 
 const ShowDetails = () => {
   const [connected, setConnected] = useState(false);
   const [auditData, setAuditData] = useState([]);
+  const [sortedcurrentData, setSortedcurrentData] = useState([]);
 
   useEffect(() => {
     let stompClient = null;
@@ -27,7 +28,6 @@ const ShowDetails = () => {
         const connectionMessage = response.body;
         const parsedMessage = JSON.parse(connectionMessage);
         setAuditData(parsedMessage);
-        console.log(parsedMessage);
       });
     });
 
@@ -40,80 +40,39 @@ const ShowDetails = () => {
     };
   }, []); // Empty dependency array to run this effect once
 
-  const calculateStats = () => {
-    const dateWiseStats = {};
+  // Sort currentData in descending order based on the date and time
+  const sortedData = auditData.sort(
+    (a, b) => new Date(b.date) - new Date(a.date)
+  );
 
-    auditData.forEach((entry) => {
-      const date = new Date(entry.date).toLocaleString("en-GB", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      });
-      const status = entry.status;
+  const currentDat = new Date();
+  const year = currentDat.getFullYear();
+  const month = String(currentDat.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  const day = String(currentDat.getDate()).padStart(2, "0");
+  const formattedDat = `${year}-${month}-${day}`;
 
-      if (!dateWiseStats[date.slice(0, 10)]) {
-        dateWiseStats[date.slice(0, 10)] = {
-          valid: 0,
-          invalid: 0,
-          formattedDate: date,
-        };
-      }
-
-      if (status === "Valid" || status === "valid") {
-        dateWiseStats[date.slice(0, 10)].valid += 1;
-      } else if (status === "Invalid" || status === "invalid") {
-        dateWiseStats[date.slice(0, 10)].invalid += 1;
-      }
-    });
-    console.log(dateWiseStats);
-    return dateWiseStats;
-  };
-
-  const dateWiseStats = calculateStats();
-
-  // const currentDate = new Date().toISOString().slice(0, 10);
-  // console.log(currentDate);
-  // const currentData = auditData.filter((entry) => entry.date.slice(0, 10) === currentDate);
-  // console.log(currentData);
-
-  const currentDate = new Date();
-  const formattedDate = currentDate.toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
+  const currentData = sortedData.filter((entry) => {
+    return formattedDat === entry.date.slice(0, 10);
   });
-  // console.log(formattedDate);
-    const currentData = auditData.filter((entry) => {
-    const entryDate = new Date(entry.date);
-    // console.log(entryDate);
-    // // Convert entry.date to UTC
-    // const entryDateUTC = new Date(entryDate.getTime() + entryDate.getTimezoneOffset() * 60000);
-    const extractedDate = entryDate.toLocaleDateString("en-GB", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    console.log(extractedDate);
-
-    return extractedDate === formattedDate;
-  });
-
-  console.log(currentData);
 
   return (
-    <div>
-      <h1 style={{ textAlign: "center" }}>Admin Dashboard</h1>
+    <div className="dash-bg" >
+      <div className="center-row container-fluid">
+      {/* <h1 style={{backgroundColor:"rgb(7, 141, 146)", display:"inline"}}>Dashboard</h1> */}
+      </div>
+
+<div id="myHeading">
+  <h3>DashBoard</h3>
+</div>
+
       <div class="container-fluid">
-        <div className="row container-fluid">
-          <div className="col" style={{ height: "300px" }}>
-            <Chartpie />
-          </div>
-          <div className="col" style={{ height: "300px" }}>
-            <ChartBar />
-          </div>
+        <div className="row" style={{margin:'10px' , display:"flex", justifyContent:"center"}}>
+            <div className="col-5 chart-bg" style={{ height: "300px",border:"1px solid #a7a7a7", marginRight:'8px', boxShadow: "rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px"}} id="boxStyling">
+              <Chartpie />
+            </div>
+            <div className="col-5 chart-bg" style={{ height: "300px",border:"1px solid #a7a7a7", marginLeft:'8px', boxShadow: "rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px"}} id="boxStyling">
+              <ChartBar />
+            </div>
         </div>
         <div className="row">
           <div className="col-12">
@@ -121,6 +80,7 @@ const ShowDetails = () => {
               style={{
                 width: "75%",
                 overflowY: "auto",
+                overflowX: "auto",
                 margin: "auto",
                 marginTop: "20px",
                 height: "250px",
@@ -145,12 +105,11 @@ const ShowDetails = () => {
                 </thead>
                 <tbody>
                   {currentData.map((entry) => (
-                    <tr key={entry.callId}>
+                    <tr key={entry.id}>
                       <td>{entry.displayNum}</td>
                       <td>{entry.phoneName}</td>
                       <td>{entry.phoneNum}</td>
                       <td>
-                        {" "}
                         {new Date(entry.date).toLocaleString("en-GB", {
                           day: "2-digit",
                           month: "2-digit",
@@ -160,7 +119,9 @@ const ShowDetails = () => {
                           second: "2-digit",
                         })}
                       </td>
-                      <td>{entry.status}</td>
+                      <td style={{ color: entry.status === "valid" || entry.status === "Valid" ? "green" : "red" , textTransform:"capitalize"}}>
+                        {entry.status}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
